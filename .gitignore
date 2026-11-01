@@ -83,6 +83,8 @@ Thumbs.db
 *.swo
 *~
 .antigravity/
+.agents/
+AGENTS.md
 
 # Logs & Scripts temporaires
 *.log

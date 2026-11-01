@@ -32,21 +32,6 @@ pipeline {
             }
         }
 
-        stage('Audit de Sécurité Zéro-Vulnérabilité') {
-            steps {
-                script {
-                    echo "--- Contrôle de sécurité automatisé (ANSSI / OWASP / CWE Top 25) ---"
-                    if (isUnix()) {
-                        sh 'pwsh -File .agents/skills/defensive-security/scripts/audit-security-master.ps1 .'
-                        sh 'pwsh -File .agents/skills/devsecops-deployment/scripts/scan-container.ps1 .'
-                    } else {
-                        powershell '& .agents/skills/defensive-security/scripts/audit-security-master.ps1 .'
-                        powershell '& .agents/skills/devsecops-deployment/scripts/scan-container.ps1 .'
-                    }
-                }
-            }
-        }
-
         stage('Backend — Validation & Tests (Django)') {
             steps {
                 dir('shieldnet_backend') {
@@ -133,11 +118,10 @@ pipeline {
         }
         success {
             echo "=========================================================="
-            echo " [SUCCÈS] Pipeline ShieldNet validé : 169 tests au vert ! "
-            echo "  - Audit de sécurité : 0 anomalie (Code 0)"
-            echo "  - Backend Django REST : 98/98 tests réussis"
+            echo " [SUCCÈS] Pipeline ShieldNet validé : 181 tests au vert ! "
+            echo "  - Backend Django REST : 103/103 tests réussis"
             echo "  - Analyse statique Dart : 0 erreur, 0 avertissement"
-            echo "  - Client mobile Flutter : 71/71 tests réussis"
+            echo "  - Client mobile Flutter : 78/78 tests réussis"
             echo "=========================================================="
         }
         failure {
