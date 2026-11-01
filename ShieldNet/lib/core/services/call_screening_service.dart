@@ -27,7 +27,7 @@ class CallScreeningService {
     }
   }
 
-  /// Teste le pont natif SQLite <-> Kotlin en interrogeant directement Android
+  /// Teste le pont natif (SQLite <-> Kotlin sous Android, CallKit <-> Swift sous iOS)
   Future<Map<String, dynamic>> testDatabaseBridge() async {
     try {
       final result = await _channel.invokeMethod('testDatabaseBridge');
@@ -51,7 +51,7 @@ class CallScreeningService {
     }
   }
 
-  /// Demande à la couche native Kotlin de tester si un numéro est bloqué
+  /// Demande à la couche native de tester si un numéro est bloqué
   Future<bool> checkNumberWithNative(String phoneNumber) async {
     try {
       final bool? isBlocked = await _channel.invokeMethod<bool>(
@@ -86,6 +86,31 @@ class CallScreeningService {
       return active ?? false;
     } catch (e) {
       AppLogger.log("Erreur statut mode contacts uniquement: $e");
+      return false;
+    }
+  }
+
+  /// Synchronise les numéros bloqués vers l'extension native iOS CallKit / Android
+  Future<bool> syncBlockedNumbersToNative(List<int> numbers) async {
+    try {
+      final bool? success = await _channel.invokeMethod<bool>(
+        'syncBlockedNumbersToExtension',
+        {'numbers': numbers},
+      );
+      return success ?? false;
+    } catch (e) {
+      AppLogger.log("Erreur synchronisation numéros natifs: $e");
+      return false;
+    }
+  }
+
+  /// Demande le rechargement forcé de l'extension native Call Directory iOS
+  Future<bool> reloadCallDirectoryExtension() async {
+    try {
+      final bool? success = await _channel.invokeMethod<bool>('reloadCallDirectoryExtension');
+      return success ?? false;
+    } catch (e) {
+      AppLogger.log("Erreur rechargement extension CallKit: $e");
       return false;
     }
   }

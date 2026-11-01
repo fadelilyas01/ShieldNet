@@ -1,0 +1,153 @@
+version: '3.8'
+
+# ==============================================================================
+# ShieldNet - Architecture Haute Disponibilité (HA) & Clustering PostgreSQL
+# Déploiement Entreprise : Primary-Replica Streaming Replication + PgBouncer
+# ==============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Nœud PostgreSQL Primaire (Écritures DDL/DML & Streaming WAL)
+  # ---------------------------------------------------------------------------
+  postgres_primary:
+    image: postgres:16-alpine
+    container_name: shieldnet_postgres_primary
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-shieldnet_db}
+      POSTGRES_USER: ${POSTGRES_USER:-shieldnet_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - primary_data:/var/lib/postgresql/data
+      - ./shieldnet_backend/docker/postgres/init-primary.sh:/docker-entrypoint-initdb.d/init-primary.sh:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    command: >
+      postgres
+        -c wal_level=replica
+        -c max_wal_senders=10
+        -c max_replication_slots=10
+        -c hot_standby=on
+        -c password_encryption=scram-sha-256
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shieldnet_user} -d ${POSTGRES_DB:-shieldnet_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # 2. Nœud PostgreSQL Réplique (Lectures Distribuées en Streaming Réplication)
+  # ---------------------------------------------------------------------------
+  postgres_replica:
+    image: postgres:16-alpine
+    container_name: shieldnet_postgres_replica
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PGUSER: ${POSTGRES_USER:-shieldnet_user}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - replica_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+    command: >
+      bash -c "
+        if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+          echo 'Attente du nœud primaire et initialisation de la réplique...'
+          until pg_basebackup -h postgres_primary -D /var/lib/postgresql/data -U ${POSTGRES_USER:-shieldnet_user} -v -P -R -X stream; do
+            sleep 2
+          done
+        fi
+        exec postgres -c hot_standby=on
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shieldnet_user}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # 3. PgBouncer - Pooler de Connexions Haute Concurrence (Transaction Pooling)
+  # ---------------------------------------------------------------------------
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.22.0
+    container_name: shieldnet_pgbouncer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      DB_USER: ${POSTGRES_USER:-shieldnet_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: postgres_primary
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGRES_DB:-shieldnet_db}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: "10000"
+      DEFAULT_POOL_SIZE: "50"
+      RESERVE_POOL_SIZE: "10"
+      AUTH_TYPE: scram-sha-256
+    ports:
+      - "127.0.0.1:6432:5432"
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # 4. Cache & Files d'Attente Redis
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: shieldnet_ha_redis
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  # ---------------------------------------------------------------------------
+  # 5. API REST Backend Django (Routage Automatique Primary/Replica)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./shieldnet_backend
+      dockerfile: Dockerfile
+    container_name: shieldnet_ha_backend
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+      postgres_replica:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - ./shieldnet_backend/.env
+    environment:
+      DJANGO_DEBUG: "False"
+      SECRET_KEY: "${SECRET_KEY}"
+      API_KEY: "${API_KEY}"
+      HASH_SALT: "${HASH_SALT}"
+      POSTGRES_DB: "${POSTGRES_DB:-shieldnet_db}"
+      POSTGRES_USER: "${POSTGRES_USER:-shieldnet_user}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST: "pgbouncer"
+      POSTGRES_PORT: "5432"
+      POSTGRES_REPLICA_HOST: "postgres_replica"
+      POSTGRES_REPLICA_PORT: "5432"
+      DB_CONN_MAX_AGE: "300"
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  primary_data:
+  replica_data:

@@ -6,6 +6,8 @@ services:
     image: postgres:16-alpine
     container_name: shieldnet_postgres
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-shieldnet_db}
       POSTGRES_USER: ${POSTGRES_USER:-shieldnet_user}
@@ -16,7 +18,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U shieldnet_user -d shieldnet_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shieldnet_user} -d ${POSTGRES_DB:-shieldnet_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -28,6 +30,8 @@ services:
     image: redis:7-alpine
     container_name: shieldnet_redis
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     # Durcissement réseau : loopback local uniquement
     ports:
       - "127.0.0.1:6379:6379"
@@ -41,6 +45,8 @@ services:
       dockerfile: Dockerfile
     container_name: shieldnet_api
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       db:
         condition: service_healthy

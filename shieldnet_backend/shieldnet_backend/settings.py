@@ -124,6 +124,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'shieldnet_backend.wsgi.application'
 
+# Architecture Haute Disponibilité (HA) & Clustering PostgreSQL
+db_conn_max_age = int(os.environ.get('DB_CONN_MAX_AGE', '300' if IS_PRODUCTION else '0'))
+
 if os.environ.get('POSTGRES_DB'):
     DATABASES = {
         'default': {
@@ -133,8 +136,23 @@ if os.environ.get('POSTGRES_DB'):
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
             'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
             'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'CONN_MAX_AGE': db_conn_max_age,
+            'CONN_HEALTH_CHECKS': True,
         }
     }
+    # Configuration du nœud réplique en lecture si présent dans le cluster (Read Replica)
+    replica_host = os.environ.get('POSTGRES_REPLICA_HOST', '').strip()
+    if replica_host and not IS_TESTING:
+        DATABASES['replica'] = {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'shieldnet_db'),
+            'USER': os.environ.get('POSTGRES_USER', 'shieldnet_user'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': replica_host,
+            'PORT': os.environ.get('POSTGRES_REPLICA_PORT', os.environ.get('POSTGRES_PORT', '5432')),
+            'CONN_MAX_AGE': db_conn_max_age,
+            'CONN_HEALTH_CHECKS': True,
+        }
 else:
     DATABASES = {
         'default': {
@@ -142,6 +160,9 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+# Routeur de base de données Haute Disponibilité (Primary / Replica)
+DATABASE_ROUTERS = ['shield_api.routers.PrimaryReplicaDatabaseRouter']
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -293,6 +314,25 @@ class APIVersionHeaderMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         response['X-API-Version'] = '1.0.0'
+        # En-têtes de sécurité HTTP stricts (CWE-1021, CWE-693)
+        if not response.has_header('Content-Security-Policy'):
+            response['Content-Security-Policy'] = (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                "font-src 'self' https://fonts.gstatic.com data:; "
+                "img-src 'self' data: https:; "
+                "connect-src 'self'; "
+                "object-src 'none'; "
+                "base-uri 'self'; "
+                "frame-ancestors 'none';"
+            )
+        if not response.has_header('Permissions-Policy'):
+            response['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=(), payment=()'
+        if not response.has_header('X-Content-Type-Options'):
+            response['X-Content-Type-Options'] = 'nosniff'
+        if not response.has_header('Referrer-Policy'):
+            response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         return response
 
 
