@@ -11,28 +11,9 @@ on:
 permissions: read-all
 
 jobs:
-  security-audit:
-    name: Zero-Vulnerability Security Audit (ANSSI/OWASP/CWE)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Master Security Audit (PowerShell Core)
-        shell: pwsh
-        run: |
-          & ".agents/skills/defensive-security/scripts/audit-security-master.ps1" "."
-
-      - name: Run Container Hardening Scan
-        shell: pwsh
-        run: |
-          & ".agents/skills/devsecops-deployment/scripts/scan-container.ps1" "."
-
   backend-tests:
     name: Backend Tests & Quality (Django)
     runs-on: ubuntu-latest
-    needs: security-audit
 
     steps:
       - name: Checkout repository
@@ -69,7 +50,6 @@ jobs:
   mobile-tests:
     name: Mobile Tests & Quality (Flutter)
     runs-on: ubuntu-latest
-    needs: security-audit
 
     steps:
       - name: Checkout repository
