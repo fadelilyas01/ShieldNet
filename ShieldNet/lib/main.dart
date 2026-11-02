@@ -23,11 +23,15 @@ import 'core/services/session_timeout_service.dart';
 import 'core/services/auth_service.dart';
 
 import 'core/widgets/auth_gate.dart';
+import 'core/widgets/error_boundary.dart';
 
 export 'core/providers/app_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Remplacement des ecrans rouges de crash par un composant d'erreur gracieux (Anti-Crash)
+  ErrorWidget.builder = (FlutterErrorDetails details) => ShieldNetErrorBoundary(details: details);
 
   // Lecture parallèle ultra-rapide (< 12ms) des configurations essentielles
   final results = await Future.wait([

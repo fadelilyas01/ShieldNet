@@ -113,6 +113,22 @@ class ApiClient {
 
     dio.interceptors.add(
       InterceptorsWrapper(
+        onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
+          // Traçabilité distribuée (Correlation ID / X-Request-ID)
+          if (!options.headers.containsKey('X-Request-ID')) {
+            options.headers['X-Request-ID'] =
+                'mob-${DateTime.now().millisecondsSinceEpoch}-${options.method.toLowerCase()}';
+          }
+          // Idempotency-Key pour les mutations critiques (POST / PUT / PATCH)
+          if (options.method == 'POST' || options.method == 'PUT' || options.method == 'PATCH') {
+            if (!options.headers.containsKey('Idempotency-Key')) {
+              final payloadHash = options.data != null ? options.data.hashCode.abs().toString() : 'empty';
+              options.headers['Idempotency-Key'] =
+                  'idemp-${options.path.replaceAll('/', '-')}-$payloadHash-${DateTime.now().millisecondsSinceEpoch}';
+            }
+          }
+          return handler.next(options);
+        },
         onError: (DioException err, ErrorInterceptorHandler handler) async {
           final statusCode = err.response?.statusCode;
           final isConnErr = err.type == DioExceptionType.connectionTimeout ||

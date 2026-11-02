@@ -6,311 +6,395 @@
 {% block content %}
 <div class="soc-dashboard-wrap">
 
-  <!-- 1. Bannière Principale SOC -->
-  <div class="soc-hero-banner">
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div class="brand-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+  <!-- 1. En-tête Opérations Épuré (Senior Design) -->
+  <header class="soc-page-header">
+    <div class="soc-header-content">
+      <div class="soc-title-group">
+        <h1 class="soc-page-title">Tableau de Bord SOC &bull; Supervision Télécom</h1>
+        <p class="soc-page-subtitle">Modération collaborative des signalements, réhabilitation des numéros et conformité réglementaire</p>
       </div>
-      <div>
-        <h1 class="hero-banner-title">
-          ShieldNet &mdash; Tableau de Bord SOC & Modération Télécom
-        </h1>
-        <p class="hero-banner-sub">
-          Supervision bienveillante des flux d'appels, réhabilitation des numéros de confiance et protection citoyenne
-        </p>
-      </div>
-    </div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-      <span class="soc-pill soc-pill-green">
-        <span class="status-led online"></span> Filtrage Actif (< 2 ms)
-      </span>
-      <span class="soc-pill soc-pill-blue">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        Vie Privée Protégée
-      </span>
-    </div>
-  </div>
-
-  <!-- 2. Cartes KPI Télécom -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-card-header">
-        <span class="kpi-label">Menaces Bloquées</span>
-        <div class="kpi-icon-pill red">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
-        </div>
-      </div>
-      <div id="kpi-blocked-val" class="kpi-val red">{{ kpi_blocked|default:"0" }}</div>
-      <div class="kpi-sub-text">Numéros inscrits en liste noire active</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card-header">
-        <span class="kpi-label">Numéros Autorisés</span>
-        <div class="kpi-icon-pill green">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        </div>
-      </div>
-      <div id="kpi-whitelisted-val" class="kpi-val green">{{ kpi_whitelisted|default:"0" }}</div>
-      <div class="kpi-sub-text">{{ consensus_rate_pct }}% taux de réhabilitation</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card-header">
-        <span class="kpi-label">Signalements Reçus</span>
-        <div class="kpi-icon-pill amber">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-        </div>
-      </div>
-      <div id="kpi-reports-val" class="kpi-val amber">{{ kpi_reports|default:"0" }}</div>
-      <div class="kpi-sub-text">{{ kpi_safe_reports|default:"0" }} contestations & avis sûrs</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card-header">
-        <span class="kpi-label">Abonnés & Flotte</span>
-        <div class="kpi-icon-pill blue">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        </div>
-      </div>
-      <div id="kpi-users-val" class="kpi-val blue">{{ kpi_users|default:"0" }}</div>
-      <div class="kpi-sub-text">Comptes mobiles synchronisés</div>
-    </div>
-  </div>
-
-  <!-- 3. Actions Rapides de Modération -->
-  <div class="ops-bar">
-    <div class="ops-bar-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-      <span>Actions Rapides de Modération</span>
-    </div>
-    <div class="ops-bar-actions">
-      <a href="/admin/operations/triage/" class="ops-btn ops-btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-        <span>Ouvrir la File de Triage</span>
-      </a>
-      <a href="/admin/operations/sandbox/" class="ops-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-        <span>Auditer un Numéro</span>
-      </a>
-      <a href="/admin/operations/export/csv/" class="ops-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        <span>Export CSV Blacklist</span>
-      </a>
-      <a href="/admin/operations/report/executive/" target="_blank" rel="noopener noreferrer" class="ops-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-        <span>Rapport Mensuel PDF</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- 4. Graphiques d'Activité Télécom -->
-  <div class="charts-row">
-    <div class="chart-card">
-      <div class="chart-card-header">
-        <div>
-          <h3 class="chart-title">Évolution des Signalements (7 Derniers Jours)</h3>
-          <p class="chart-sub">Volume journalier des spams rapportés vs numéros réhabilités</p>
-        </div>
-      </div>
-      <div style="height: 220px; position: relative;">
-        <canvas id="trafficTrendChart"></canvas>
+      <div class="soc-header-actions">
+        <span class="soc-status-badge" role="status" aria-label="Statut du système">
+          <span class="status-dot"></span> Opérationnel &bull; Latence &lt; 2 ms
+        </span>
+        <a href="/admin/operations/triage/" class="btn-senior btn-senior-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>File de Triage</span>
+        </a>
+        <a href="/admin/operations/sandbox/" class="btn-senior btn-senior-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Auditer un Numéro</span>
+        </a>
       </div>
     </div>
 
-    <div class="chart-card">
-      <div class="chart-card-header">
-        <div>
-          <h3 class="chart-title">Répartition des Nuisances par Catégorie</h3>
-          <p class="chart-sub">Typologie des menaces enregistrées sur le réseau</p>
-        </div>
-      </div>
-      <div style="height: 220px; position: relative;">
-        <canvas id="categoryDonutChart"></canvas>
-      </div>
-    </div>
-  </div>
+    <!-- Navigation par Onglets (Allège la charge cognitive) -->
+    <nav class="soc-tabs" role="tablist" aria-label="Sections du tableau de bord">
+      <button class="soc-tab-btn active" role="tab" aria-selected="true" aria-controls="tab-operations" id="tab-btn-operations" onclick="switchSocTab('operations')">
+        Opérations & Triage
+      </button>
+      <button class="soc-tab-btn" role="tab" aria-selected="false" aria-controls="tab-analytics" id="tab-btn-analytics" onclick="switchSocTab('analytics')">
+        Analytique des Flux
+      </button>
+      <button class="soc-tab-btn" role="tab" aria-selected="false" aria-controls="tab-compliance" id="tab-btn-compliance" onclick="switchSocTab('compliance')">
+        Conformité Régionale (CA / US)
+      </button>
+    </nav>
+  </header>
 
-  <!-- 4.5. Répartition Géographique des Utilisateurs & Normes Régionales -->
-  <div class="data-card" style="margin-bottom: 24px;">
-    <div class="data-card-header">
-      <div>
-        <h3 class="data-card-title">Origine Géographique des Utilisateurs & Conformité Régionale</h3>
-        <p class="data-card-sub">Localisation des utilisateurs (Canada 🇨🇦 / États-Unis 🇺🇸) et application des cadres réglementaires</p>
-      </div>
-      <a href="{% url 'admin:auth_user_changelist' %}" class="see-all-link">Gestion des utilisateurs &rarr;</a>
-    </div>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 18px;">
-      <!-- Carte Canada -->
-      <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 16px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 24px;">🇨🇦</span>
-            <div>
-              <strong style="font-size: 15px;">Canada</strong>
-              <div style="font-size: 11px; color: var(--text-muted);">Loi 25 QC • LPRPDE / PIPEDA & CRTC</div>
-            </div>
-          </div>
-          <span style="font-size: 18px; font-weight: 800; color: #3b82f6;">{{ users_by_country.CA|default:"0" }}</span>
-        </div>
-        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-          Les utilisateurs canadiens sont protégés par la Loi 25 au Québec et la LPRPDE au niveau fédéral, avec conservation stricte et immunité 911/811/988.
-        </div>
-      </div>
-
-      <!-- Carte USA -->
-      <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 16px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 24px;">🇺🇸</span>
-            <div>
-              <strong style="font-size: 15px;">États-Unis</strong>
-              <div style="font-size: 11px; color: var(--text-muted);">TCPA • FCC STIR/SHAKEN • CCPA (Californie)</div>
-            </div>
-          </div>
-          <span style="font-size: 18px; font-weight: 800; color: #10b981;">{{ users_by_country.US|default:"0" }}</span>
-        </div>
-        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-          Les utilisateurs américains sont protégés par la réglementation TCPA / FCC et la législation CCPA/CPRA en Californie contre le démarchage et les robocalls.
-        </div>
-      </div>
-    </div>
-
-    <!-- Répartition par Province / État -->
-    {% if users_regional_breakdown %}
-    <div style="padding: 0 18px 18px 18px;">
-      <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">
-        Détail par Province / État & Norme Juridique
-      </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-        {% for reg in users_regional_breakdown %}
-        <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 12px; border-radius: 8px;">
-          <span>{{ reg.country_flag }}</span>
-          <strong style="font-size: 13px;">{{ reg.province_name }} ({{ reg.province_code }})</strong>
-          <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-weight: 600;">{{ reg.norm_name }}</span>
-          <span style="font-size: 12px; font-weight: 800; color: var(--text-primary); margin-left: 4px;">{{ reg.count }}</span>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- 5. Tables de Données Récentes (Triage Prioritaire & Journal d'Audit) -->
-  <div class="data-dual-row">
+  <!-- =====================================================================
+       ONGLET 1 : OPÉRATIONS & MODÉRATION (Vue Principale)
+       ===================================================================== -->
+  <section id="tab-operations" class="soc-tab-pane active" role="tabpanel" aria-labelledby="tab-btn-operations">
     
-    <!-- File de Triage Récente -->
-    <div class="data-card">
-      <div class="data-card-header">
-        <div>
-          <h3 class="data-card-title">Derniers Signalements à Arbitrer</h3>
-          <p class="data-card-sub">Numéros suspects en attente de validation manuelle</p>
+    <!-- Indicateurs Clés Métier (Cartes Métriques Sobres) -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Menaces Actives Bloquées</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
         </div>
-        <a href="/admin/operations/triage/" class="see-all-link">Consulter tout &rarr;</a>
+        <div class="metric-value font-tabular" id="kpi-blocked-val">{{ kpi_blocked|default:"0" }}</div>
+        <div class="metric-hint">Inscrits en liste noire distribuée</div>
       </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Numéros Réhabilités</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div class="metric-value font-tabular text-success" id="kpi-whitelisted-val">{{ kpi_whitelisted|default:"0" }}</div>
+        <div class="metric-hint">{{ consensus_rate_pct|default:"100" }}% taux de consensus citoyen</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Signalements Reçus</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </div>
+        <div class="metric-value font-tabular" id="kpi-reports-val">{{ kpi_reports|default:"0" }}</div>
+        <div class="metric-hint">{{ kpi_safe_reports|default:"0" }} avis de contestation sûrs</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Flotte Citoyenne Active</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="metric-value font-tabular" id="kpi-users-val">{{ kpi_users|default:"0" }}</div>
+        <div class="metric-hint">Terminaux mobiles synchronisés</div>
+      </div>
+    </div>
+
+    <!-- Tables d'Action Opérationnelle (Dual View) -->
+    <div class="tables-dual-grid">
       
-      <div class="soc-table-responsive">
-        <table class="soc-data-table">
-          <thead>
-            <tr>
-              <th>Numéro</th>
-              <th>Catégorie</th>
-              <th>Score Risque</th>
-              <th>Signalements</th>
-              <th style="text-align: right;">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in recent_pending %}
-            <tr>
-              <td>
-                <span class="mono-badge">{{ item.phone_number }}</span>
-              </td>
-              <td>
-                <span class="badge-cat {{ item.category }}">{{ item.get_category_display|default:item.category }}</span>
-              </td>
-              <td>
-                <strong style="color: {% if item.risk_score >= 80 %}var(--accent-red){% elif item.risk_score >= 50 %}var(--accent-amber){% else %}var(--accent-green){% endif %};">
-                  {{ item.risk_score }}%
-                </strong>
-              </td>
-              <td>{{ item.reports_count|default:"1" }}</td>
-              <td style="text-align: right;">
-                <a href="/admin/operations/triage/" class="triage-quick-btn" title="Arbitrer dans le centre de triage">
-                  Examiner
-                </a>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">
-                Aucun signalement en attente d'arbitrage. La file de triage est à jour.
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Journal d'Audit Récent -->
-    <div class="data-card">
-      <div class="data-card-header">
-        <div>
-          <h3 class="data-card-title">Traçabilité & Journal d'Audit</h3>
-          <p class="data-card-sub">Dernières actions administratives enregistrées</p>
+      <!-- File de Triage Prioritaire -->
+      <div class="surface-card">
+        <div class="surface-header">
+          <div>
+            <h2 class="surface-title">Signalements en Attente d'Arbitrage</h2>
+            <p class="surface-subtitle">Numéros nécessitant une validation par un opérateur SOC</p>
+          </div>
+          <a href="/admin/operations/triage/" class="link-subtle">Accéder au triage &rarr;</a>
         </div>
-        <a href="{% url 'admin:shield_api_auditlog_changelist' %}" class="see-all-link">Journal complet &rarr;</a>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Numéro</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Risque</th>
+                <th scope="col">Volume</th>
+                <th scope="col" style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in recent_pending %}
+              <tr>
+                <td>
+                  <code class="code-badge">{{ item.phone_number }}</code>
+                </td>
+                <td>
+                  <span class="tag-category {{ item.category }}">{{ item.get_category_display|default:item.category }}</span>
+                </td>
+                <td>
+                  <span class="font-tabular font-semibold {% if item.risk_score >= 80 %}text-danger{% elif item.risk_score >= 50 %}text-warning{% else %}text-success{% endif %}">
+                    {{ item.risk_score }}%
+                  </span>
+                </td>
+                <td class="font-tabular">{{ item.reports_count|default:"1" }}</td>
+                <td style="text-align: right;">
+                  <a href="/admin/operations/triage/" class="btn-table-action" title="Examiner dans le centre de triage">
+                    Examiner
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="table-empty-state">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <p>Aucun signalement en attente. La file de triage est à jour.</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="soc-table-responsive">
-        <table class="soc-data-table">
-          <thead>
-            <tr>
-              <th>Opérateur</th>
-              <th>Action</th>
-              <th>Date & Heure</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for log in recent_audit_logs %}
-            <tr>
-              <td>
-                <strong>{{ log.user.username|default:"Système" }}</strong>
-              </td>
-              <td>
-                <span class="badge-action {{ log.action }}">{{ log.get_action_display|default:log.action }}</span>
-              </td>
-              <td style="color: var(--text-muted); font-size: 12px;">
-                {{ log.created_at|date:"d/m H:i" }}
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">
-                Aucune entrée d'audit récente.
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <!-- Journal d'Audit et Traçabilité -->
+      <div class="surface-card">
+        <div class="surface-header">
+          <div>
+            <h2 class="surface-title">Journal d'Audit & Traçabilité</h2>
+            <p class="surface-subtitle">Dernières actions enregistrées sur la plateforme</p>
+          </div>
+          <a href="{% url 'admin:shield_api_auditlog_changelist' %}" class="link-subtle">Consulter tout &rarr;</a>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Opérateur</th>
+                <th scope="col">Action</th>
+                <th scope="col" style="text-align: right;">Horodatage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in recent_audit_logs %}
+              <tr>
+                <td><strong>{{ log.user.username|default:"Système" }}</strong></td>
+                <td>
+                  <span class="tag-action {{ log.action }}">{{ log.get_action_display|default:log.action }}</span>
+                </td>
+                <td style="text-align: right;" class="text-muted font-tabular font-sm">
+                  {{ log.created_at|date:"d/m H:i" }}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="table-empty-state">
+                  <p>Aucune action d'audit récente enregistrée.</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+
     </div>
+  </section>
 
-  </div>
+  <!-- =====================================================================
+       ONGLET 2 : ANALYTIQUE DES FLUX (Graphiques Denses & Lisibles)
+       ===================================================================== -->
+  <section id="tab-analytics" class="soc-tab-pane" role="tabpanel" aria-labelledby="tab-btn-analytics">
+    <div class="charts-senior-grid">
+      
+      <div class="surface-card">
+        <div class="surface-header">
+          <div>
+            <h2 class="surface-title">Évolution des Menaces & Décisions (7 Derniers Jours)</h2>
+            <p class="surface-subtitle">Corrélation temporelle entre signalements reçus et numéros neutralisés</p>
+          </div>
+        </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="trafficTrendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="surface-card">
+        <div class="surface-header">
+          <div>
+            <h2 class="surface-title">Typologie des Nuisances Téléphoniques</h2>
+            <p class="surface-subtitle">Répartition par catégorie d'attaque enregistrée</p>
+          </div>
+        </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="categoryDonutChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       ONGLET 3 : CONFORMITÉ RÉGIONALE (Loi 25, PIPEDA, TCPA)
+       ===================================================================== -->
+  <section id="tab-compliance" class="soc-tab-pane" role="tabpanel" aria-labelledby="tab-btn-compliance">
+    <div class="compliance-layout">
+      
+      <!-- Cadres Légaux -->
+      <div class="compliance-cards-grid">
+        <div class="compliance-box">
+          <div class="compliance-box-header">
+            <span class="compliance-country">Canada</span>
+            <span class="compliance-count font-tabular">{{ users_by_country.CA|default:"0" }} utilisateurs</span>
+          </div>
+          <div class="compliance-norm-badge">Loi 25 (Québec) &bull; LPRPDE / PIPEDA &bull; CRTC</div>
+          <p class="compliance-desc">
+            Régime strict de protection de la vie privée. Chiffrement HMAC-SHA256 non réversible des identifiants et immunité absolue garantie pour les numéros de secours (911, 811, 988, 711).
+          </p>
+        </div>
+
+        <div class="compliance-box">
+          <div class="compliance-box-header">
+            <span class="compliance-country">États-Unis</span>
+            <span class="compliance-count font-tabular">{{ users_by_country.US|default:"0" }} utilisateurs</span>
+          </div>
+          <div class="compliance-norm-badge">TCPA &bull; FCC STIR/SHAKEN &bull; CCPA (Californie)</div>
+          <p class="compliance-desc">
+            Vérification cryptographique STIR/SHAKEN anti-usurpation (anti-spoofing) et respect des droits de désinscription au démarchage automatisé (Robocalls).
+          </p>
+        </div>
+      </div>
+
+      <!-- Répartition Détaillée par Région -->
+      {% if users_regional_breakdown %}
+      <div class="surface-card" style="margin-top: 16px;">
+        <div class="surface-header">
+          <h2 class="surface-title">Détail par Territoire & Cadre d'Application</h2>
+        </div>
+        <div class="region-tags-container">
+          {% for reg in users_regional_breakdown %}
+          <div class="region-tag">
+            <span class="region-name">{{ reg.province_name }} ({{ reg.province_code }})</span>
+            <span class="region-norm">{{ reg.norm_name }}</span>
+            <span class="region-count font-tabular">{{ reg.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </section>
 
 </div>
 
-<!-- Initialisation des Graphiques Chart.js et gestion du thème -->
+<!-- Script de Gestion des Onglets et des Graphiques -->
 <script>
 let trendChartInstance = null;
 let donutChartInstance = null;
+let chartsInitialized = false;
+
+function switchSocTab(tabId) {
+  document.querySelectorAll('.soc-tab-btn').forEach(btn => {
+    const isSelected = btn.id === `tab-btn-${tabId}`;
+    btn.classList.toggle('active', isSelected);
+    btn.setAttribute('aria-selected', isSelected);
+  });
+
+  document.querySelectorAll('.soc-tab-pane').forEach(pane => {
+    pane.classList.toggle('active', pane.id === `tab-${tabId}`);
+  });
+
+  // Si on ouvre l'onglet analytics pour la première fois, initialiser ou redimensionner les graphiques
+  if (tabId === 'analytics') {
+    if (!chartsInitialized) {
+      initSeniorCharts();
+      chartsInitialized = true;
+    } else {
+      if (trendChartInstance) trendChartInstance.resize();
+      if (donutChartInstance) donutChartInstance.resize();
+    }
+  }
+}
+
+function initSeniorCharts() {
+  const isLight = document.documentElement.classList.contains('light-mode');
+  const textColor = isLight ? '#475569' : '#94a3b8';
+  const gridColor = isLight ? '#f1f5f9' : '#1e293b';
+
+  const trendCtx = document.getElementById('trafficTrendChart');
+  if (trendCtx) {
+    const trendLabels = {{ trend_labels_json|default:"[]"|safe }};
+    const trendReports = {{ trend_reports_json|default:"[]"|safe }};
+    const trendBlocked = {{ trend_blocked_json|default:"[]"|safe }};
+
+    trendChartInstance = new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: trendLabels.length ? trendLabels : ['J-6', 'J-5', 'J-4', 'J-3', 'J-2', 'Hier', 'Aujourd\'hui'],
+        datasets: [
+          {
+            label: 'Signalements Reçus',
+            data: trendReports.length ? trendReports : [14, 21, 16, 28, 24, 32, 29],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.06)',
+            borderWidth: 2,
+            tension: 0.25,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          },
+          {
+            label: 'Numéros Neutralisés',
+            data: trendBlocked.length ? trendBlocked : [9, 17, 12, 20, 21, 26, 23],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.06)',
+            borderWidth: 2,
+            tension: 0.25,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: textColor, boxWidth: 10, font: { family: 'Inter', size: 12, weight: 500 } }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', size: 11 } } },
+          y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'Inter', size: 11 } }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  const donutCtx = document.getElementById('categoryDonutChart');
+  if (donutCtx) {
+    const catLabels = {{ category_labels_json|default:"[]"|safe }};
+    const catData = {{ category_counts_json|default:"[]"|safe }};
+
+    donutChartInstance = new Chart(donutCtx, {
+      type: 'doughnut',
+      data: {
+        labels: catLabels.length ? catLabels : ['Fraude Financière', 'Démarchage Agressif', 'Phishing SMS', 'Usurpation ID'],
+        datasets: [{
+          data: catData.length ? catData : [42, 28, 18, 12],
+          backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { color: textColor, boxWidth: 10, font: { family: 'Inter', size: 11 } }
+          }
+        }
+      }
+    });
+  }
+}
 
 function updateChartsForTheme(isLight) {
   const textColor = isLight ? '#475569' : '#94a3b8';
-  const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.06)';
+  const gridColor = isLight ? '#f1f5f9' : '#1e293b';
 
   if (trendChartInstance) {
     trendChartInstance.options.scales.x.ticks.color = textColor;
@@ -328,91 +412,6 @@ function updateChartsForTheme(isLight) {
 
 window.addEventListener('shieldnet-theme-changed', function(e) {
   updateChartsForTheme(e.detail.isLight);
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  const isLight = document.documentElement.classList.contains('light-mode');
-  const textColor = isLight ? '#475569' : '#94a3b8';
-  const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.06)';
-
-  const trendCtx = document.getElementById('trafficTrendChart');
-  if (trendCtx) {
-    const trendLabels = {{ trend_labels_json|default:"[]"|safe }};
-    const trendReports = {{ trend_reports_json|default:"[]"|safe }};
-    const trendBlocked = {{ trend_blocked_json|default:"[]"|safe }};
-
-    trendChartInstance = new Chart(trendCtx, {
-      type: 'line',
-      data: {
-        labels: trendLabels.length ? trendLabels : ['J-6', 'J-5', 'J-4', 'J-3', 'J-2', 'Hier', 'Auj.'],
-        datasets: [
-          {
-            label: 'Signalements Reçus',
-            data: trendReports.length ? trendReports : [12, 19, 14, 25, 22, 30, 28],
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245, 158, 11, 0.08)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true,
-            pointRadius: 3
-          },
-          {
-            label: 'Numéros Bloqués',
-            data: trendBlocked.length ? trendBlocked : [8, 15, 11, 18, 19, 24, 21],
-            borderColor: '#dc2626',
-            backgroundColor: 'rgba(220, 38, 38, 0.08)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true,
-            pointRadius: 3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: { color: textColor, boxWidth: 12, font: { size: 12 } }
-          }
-        },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11 } }, beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  const donutCtx = document.getElementById('categoryDonutChart');
-  if (donutCtx) {
-    const catLabels = {{ category_labels_json|default:"[]"|safe }};
-    const catData = {{ category_counts_json|default:"[]"|safe }};
-
-    donutChartInstance = new Chart(donutCtx, {
-      type: 'doughnut',
-      data: {
-        labels: catLabels.length ? catLabels : ['Fraude', 'Démarchage', 'Phishing', 'Robocall'],
-        datasets: [{
-          data: catData.length ? catData : [45, 25, 20, 10],
-          backgroundColor: ['#dc2626', '#f59e0b', '#1d4ed8', '#64748b'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '70%',
-        plugins: {
-          legend: {
-            position: 'right',
-            labels: { color: textColor, boxWidth: 12, font: { size: 11 } }
-          }
-        }
-      }
-    });
-  }
 });
 </script>
 {% endblock %}

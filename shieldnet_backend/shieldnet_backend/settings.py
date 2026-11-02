@@ -93,6 +93,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'shieldnet_backend.settings.APIVersionHeaderMiddleware',
+    'shield_api.middleware.CorrelationIdMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -102,6 +103,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shield_api.middleware.IdempotencyMiddleware',
 ]
 
 ROOT_URLCONF = 'shieldnet_backend.urls'

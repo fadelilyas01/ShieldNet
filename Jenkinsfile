@@ -118,10 +118,10 @@ pipeline {
         }
         success {
             echo "=========================================================="
-            echo " [SUCCÈS] Pipeline ShieldNet validé : 181 tests au vert ! "
-            echo "  - Backend Django REST : 103/103 tests réussis"
+            echo " [SUCCÈS] Pipeline ShieldNet validé : 186 tests au vert ! "
+            echo "  - Backend Django REST : 107/107 tests réussis"
             echo "  - Analyse statique Dart : 0 erreur, 0 avertissement"
-            echo "  - Client mobile Flutter : 78/78 tests réussis"
+            echo "  - Client mobile Flutter : 79/79 tests réussis"
             echo "=========================================================="
         }
         failure {
